@@ -38,7 +38,7 @@ my $builder = $class->new(
                           module_name         => 'Ham::DXCC',
                           dist_author         => 'Roger Pettett <rmp@psyphi.net>',
                           version_from        => 'lib/Ham/DXCC.pm',
-                          dist_abstract       => q[IOTA Marathon website],
+                          dist_abstract       => q[DXCC cty.xml fetching & parsing],
                           license             => 'gpl',
                           requires            => {
                                                   'strict'                  => '1.03',
@@ -46,6 +46,7 @@ my $builder = $class->new(
                                                   'base'                    => '2.07',
                                                   'Carp'                    => '1.04',
                                                   'English'                 => '1.02',
+                                                  'LWP::Simple'             => '6.00',
                                                   'XML::XPath'              => '1.13',
                                                  },
                           recommends          => {
@@ -58,7 +59,6 @@ my $builder = $class->new(
                                                   'Test::Perl::Critic'      => '1.01',
                                                  },
                           script_files        => [qw(bin/dxcc-update)],
-                          data_files          => _process_dir('data'),
                           use_tap_harness     => 1,
                           tap_harness_args    => {
                                                   jobs      => 10,
@@ -69,29 +69,4 @@ my $builder = $class->new(
 #                          sign                => 1,
                          );
 
-for my $extra (qw(data)) {
-  $builder->add_build_element($extra);
-  my $prefix = $builder->prefix;
-  $prefix    = $prefix ? "$prefix/" : q[/usr/];
-  $builder->install_path($extra => sprintf q[%sshare/ham-dxcc/%s], $prefix, $extra);
-}
-
 $builder->create_build_script();
-
-sub _process_dir {
-  my (@topdirs) = @_;
-  my $results  = {};
-
-  for my $topdir (@topdirs) {
-    open my $fh, q[-|], qq[find $topdir -type f] or croak $ERRNO;
-    while(<$fh>) {
-      chomp;
-      if($_ =~ m|^$topdir|smx) {
-        $results->{$_} = $_;
-      }
-    }
-    close $fh or croak $ERRNO;
-  }
-
-  return $results;
-}
