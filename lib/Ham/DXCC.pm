@@ -17,7 +17,7 @@ use Carp;
 
 our $APIKEY  = q[];
 our $SOURCE  = q[https://secure.clublog.org/cty.php?api=%s];
-our $VERSION = q[1.1];
+our $VERSION = q[1.2];
 
 sub new {
   my ($class) = @_;
